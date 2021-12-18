@@ -17,6 +17,7 @@ type GetWebRequest interface {
 	FetchBytes(url string) []byte
 }
 
+// Based on the blog post at https://blog.alexellis.io/golang-json-api-client/
 func main() {
 
 	result := GetAstronauts()
