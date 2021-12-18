@@ -16,22 +16,37 @@ type people struct {
 func main() {
 	url := "http://api.open-notify.org/astros.json"
 
-	spaceClient := http.Client{
-		Timeout: time.Second * 2,
-	}
+	req := CreateRequest(url)
+	res := ExecuteRequest(req)
 
+	body := ReadResponse(res)
+	data := ParseJson(body)
+
+	fmt.Println(data.Number)
+}
+
+func CreateRequest(url string) *http.Request {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal((err))
 	}
 
 	req.Header.Set("User-Agent", "spacecount-tutorial")
+	return req
+}
 
-	res, getErr := spaceClient.Do(req)
+func ExecuteRequest(req *http.Request) *http.Response {
+	httpClient := http.Client{
+		Timeout: time.Second * 2,
+	}
+	res, getErr := httpClient.Do(req)
 	if getErr != nil {
 		log.Fatal(getErr)
 	}
+	return res
+}
 
+func ReadResponse(res *http.Response) []byte {
 	if res.Body != nil {
 		defer res.Body.Close()
 	}
@@ -40,13 +55,14 @@ func main() {
 	if readErr != nil {
 		log.Fatal(readErr)
 	}
+	return body
+}
 
+func ParseJson(body []byte) people {
 	people1 := people{}
 	jsonErr := json.Unmarshal(body, &people1)
 	if jsonErr != nil {
 		log.Fatal(jsonErr)
 	}
-
-	fmt.Println(people1.Number)
-
+	return people1
 }
