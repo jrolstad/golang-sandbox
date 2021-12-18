@@ -16,7 +16,7 @@ type people struct {
 // Based on the blog post at https://blog.alexellis.io/golang-json-api-client/
 func main() {
 
-	result := GetAstronauts(GetHttpClient())
+	result := GetAstronauts(GetHttpClient(), GetUrl())
 	fmt.Println(result.Number)
 }
 
@@ -28,8 +28,11 @@ func GetHttpClient() *http.Client {
 	return &httpClient
 }
 
-func GetAstronauts(httpClient *http.Client) people {
-	url := "http://api.open-notify.org/astros.json"
+func GetUrl() string {
+	return "http://api.open-notify.org/astros.json"
+}
+
+func GetAstronauts(httpClient *http.Client, url string) people {
 
 	req := CreateRequest(url)
 	res := ExecuteRequest(httpClient, req)

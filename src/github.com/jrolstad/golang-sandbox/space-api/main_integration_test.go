@@ -7,7 +7,7 @@ import "testing"
 
 // Based on the blog post at https://blog.alexellis.io/golang-writing-unit-tests/
 func Test_GetAstronauts_NoInputs_ReturnsAstronautData(t *testing.T) {
-	result := GetAstronauts(GetHttpClient())
+	result := GetAstronauts(GetHttpClient(),GetUrl())
 
 	AssertDataReceived(t, result)
 	AssertAstronautCountIsLargerThanZero(t, result)

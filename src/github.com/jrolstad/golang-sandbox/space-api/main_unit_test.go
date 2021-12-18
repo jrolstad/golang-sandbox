@@ -12,22 +12,26 @@ import (
 // Based on the blog post at https://blog.alexellis.io/golang-writing-unit-tests/
 func Test_GetAstronauts_NoInputs_ReturnsAstronautData(t *testing.T) {
 
-	client := GetFakeHttpClient()
-	result := GetAstronauts(client)
+	testServer := GetTestServer()
+	defer testServer.Close()
+
+	client := testServer.Client()
+	result := GetAstronauts(client, testServer.URL)
 
 	AssertDataReceived(t, result)
 	AssertAstronautCountIsOne(t, result)
 }
 
-func GetFakeHttpClient() *http.Client {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{"people": [{"craft": "The-Hab", "name": "Mark Watney"}]}`))
+func GetTestServer() *httptest.Server {
+	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(GetTestData()))
 	}))
 
-	defer ts.Close()
+	return testServer
+}
 
-	client := ts.Client()
-	return client
+func GetTestData() string {
+	return `{"people": [{"craft": "The-Hab", "name": "Mark Watney"}],"number": 1}`
 }
 
 func AssertDataReceived(t *testing.T, data people) {
