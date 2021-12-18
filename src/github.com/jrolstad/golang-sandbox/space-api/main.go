@@ -20,14 +20,15 @@ func main() {
 	fmt.Println(result.Number)
 }
 
-func GetHttpClient() http.Client {
+func GetHttpClient() *http.Client {
 	httpClient := http.Client{
 		Timeout: time.Second * 2,
 	}
 
-	return httpClient
+	return &httpClient
 }
-func GetAstronauts(httpClient http.Client) people {
+
+func GetAstronauts(httpClient *http.Client) people {
 	url := "http://api.open-notify.org/astros.json"
 
 	req := CreateRequest(url)
@@ -49,7 +50,7 @@ func CreateRequest(url string) *http.Request {
 	return req
 }
 
-func ExecuteRequest(httpClient http.Client, req *http.Request) *http.Response {
+func ExecuteRequest(httpClient *http.Client, req *http.Request) *http.Response {
 
 	res, getErr := httpClient.Do(req)
 	if getErr != nil {
