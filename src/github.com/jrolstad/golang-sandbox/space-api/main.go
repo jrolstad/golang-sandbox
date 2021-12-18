@@ -13,7 +13,17 @@ type people struct {
 	Number int `json:number`
 }
 
+type GetWebRequest interface {
+	FetchBytes(url string) []byte
+}
+
 func main() {
+
+	result := GetAstronauts()
+	fmt.Println(result.Number)
+}
+
+func GetAstronauts() people {
 	url := "http://api.open-notify.org/astros.json"
 
 	req := CreateRequest(url)
@@ -22,7 +32,7 @@ func main() {
 	body := ReadResponse(res)
 	data := ParseJson(body)
 
-	fmt.Println(data.Number)
+	return data
 }
 
 func CreateRequest(url string) *http.Request {
@@ -62,7 +72,7 @@ func ParseJson(body []byte) people {
 	people1 := people{}
 	jsonErr := json.Unmarshal(body, &people1)
 	if jsonErr != nil {
-		log.Fatal(jsonErr)
+		log.Fatalf("unable to parse value: %q, error: %s", string(body), jsonErr.Error())
 	}
 	return people1
 }
