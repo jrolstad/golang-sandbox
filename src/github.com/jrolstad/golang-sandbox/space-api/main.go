@@ -13,22 +13,25 @@ type people struct {
 	Number int `json:number`
 }
 
-type GetWebRequest interface {
-	FetchBytes(url string) []byte
-}
-
 // Based on the blog post at https://blog.alexellis.io/golang-json-api-client/
 func main() {
 
-	result := GetAstronauts()
+	result := GetAstronauts(GetHttpClient())
 	fmt.Println(result.Number)
 }
 
-func GetAstronauts() people {
+func GetHttpClient() http.Client {
+	httpClient := http.Client{
+		Timeout: time.Second * 2,
+	}
+
+	return httpClient
+}
+func GetAstronauts(httpClient http.Client) people {
 	url := "http://api.open-notify.org/astros.json"
 
 	req := CreateRequest(url)
-	res := ExecuteRequest(req)
+	res := ExecuteRequest(httpClient, req)
 
 	body := ReadResponse(res)
 	data := ParseJson(body)
@@ -46,10 +49,8 @@ func CreateRequest(url string) *http.Request {
 	return req
 }
 
-func ExecuteRequest(req *http.Request) *http.Response {
-	httpClient := http.Client{
-		Timeout: time.Second * 2,
-	}
+func ExecuteRequest(httpClient http.Client, req *http.Request) *http.Response {
+
 	res, getErr := httpClient.Do(req)
 	if getErr != nil {
 		log.Fatal(getErr)
