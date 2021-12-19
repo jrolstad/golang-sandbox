@@ -38,3 +38,11 @@ jobs:
     - name: Run Integration Tests
       run: go test --tags=integration
       working-directory: src/github.com/jrolstad/golang-sandbox/space-api
+
+    - name: Build gin-webapi
+      run: go build 
+      working-directory: src/github.com/jrolstad/golang-sandbox/gin-webapi
+    
+    - name: Test gin-webapi
+      run: go test 
+      working-directory: src/github.com/jrolstad/golang-sandbox/gin-webapi
