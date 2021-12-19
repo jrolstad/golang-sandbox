@@ -1,13 +1,19 @@
 package main
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/jrolstad/golang-sandbox/gin-webapi/orchestrators"
 )
 
-func main() {
+var ginLambda *ginadapter.GinLambda
+
+func init() {
 	router := gin.Default()
 
 	apiV1 := router.Group("/v1")
@@ -26,5 +32,15 @@ func main() {
 		c.JSON(http.StatusOK, data)
 	})
 
-	router.Run()
+	//router.Run()
+	ginLambda = ginadapter.New(router)
+}
+
+func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	// If no name is provided in the HTTP request body, throw an error
+	return ginLambda.ProxyWithContext(ctx, req)
+}
+
+func main() {
+	lambda.Start(Handler)
 }
