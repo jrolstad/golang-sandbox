@@ -15,8 +15,15 @@ func main() {
 	apiV1.GET("health", func(c *gin.Context) {
 		orchestrator := orchestrators.HealthOrchestrator{}
 
-		healthInfo := orchestrator.Get()
-		c.JSON(http.StatusOK, healthInfo)
+		data := orchestrator.Get()
+		c.JSON(http.StatusOK, data)
+	})
+
+	apiV1.GET("users", func(c *gin.Context) {
+		orchestrator := orchestrators.UserOrchestrator{}
+
+		data := orchestrator.Get()
+		c.JSON(http.StatusOK, data)
 	})
 
 	router.Run()
