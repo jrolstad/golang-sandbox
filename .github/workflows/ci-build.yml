@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
 
@@ -18,8 +19,14 @@ jobs:
       with:
         go-version: 1.17
 
-    - name: Build
-      run: go build -v ./...
+    - name: Build api-json
+      run: go build 
+      working-directory: src/github.com/jrolstad/golang-sandbox/api-json
+
+    - name: Build space-api
+      run: go build 
+      working-directory: src/github.com/jrolstad/golang-sandbox/space-api
 
     - name: Test
-      run: go test -v ./...
+      run: go test --tags=unit
+      working-directory: src/github.com/jrolstad/golang-sandbox/space-api
